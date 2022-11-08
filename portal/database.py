@@ -3,7 +3,7 @@ from typing import Any, Dict, Optional
 
 import peewee
 
-from portal.constants import Conf
+from constants import Conf
 
 Conf.db_path.parent.mkdir(parents=True, exist_ok=True)
 portal_db = peewee.SqliteDatabase(str(Conf.db_path))

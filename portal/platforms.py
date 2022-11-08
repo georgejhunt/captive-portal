@@ -1,6 +1,6 @@
 import flask
 
-from portal.constants import Conf
+from constants import Conf
 
 logger = Conf.logger
 

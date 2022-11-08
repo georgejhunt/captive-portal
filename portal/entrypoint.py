@@ -8,8 +8,8 @@ import sys
 
 sys.path.append(str(pathlib.Path(__file__).parent.resolve()))
 
-from portal.constants import Conf
-from portal.web import app
+from constants import Conf
+from web import app
 
 if not os.getenv("DONT_SETUP_FILTER"):
     Conf.logger.info(f"setting up filter via {Conf.filter_module}")
@@ -17,6 +17,6 @@ if not os.getenv("DONT_SETUP_FILTER"):
     initial_setup()
 
 if __name__ == "__main__":
-    app.run(host=os.getenv("BIND_TO", "127.0.0.1"), port=int(os.getenv("PORT", 3000)))
+    app.run(debug=True,host=os.getenv("BIND_TO", "0.0.0.0"), port=int(os.getenv("PORT", 5000)))
 else:
     application = app

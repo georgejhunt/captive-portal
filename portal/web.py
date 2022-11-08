@@ -7,9 +7,9 @@ from flask import Flask, Response, make_response, render_template, request
 from flask_babel import Babel
 from user_agents import parse
 
-from portal.constants import Conf
-from portal.database import User
-from portal.platforms import success as platform_success
+from constants import Conf
+from database import User
+from platforms import success as platform_success
 
 logger = Conf.logger
 app = Flask(Conf.logger.name, template_folder=Conf.root.joinpath("templates"))

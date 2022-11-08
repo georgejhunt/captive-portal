@@ -55,6 +55,7 @@ def initial_setup(**kwargs):
     """call setup_capture if there is no CAPTIVE_PASSLIST chain (assume not setup)"""
     result = query_netfilter("list chain nat CAPTIVE_PASSLIST")
     if not result.succeeded:
+        logger.debug("IN initial_setup calling setup_capture")
         return setup_capture(hotspot_ip=PORTAL_IP, captured_networks=CAPTURED_NETWORKS)
     return True, []
 
@@ -153,8 +154,11 @@ def query_netfilter_bulk(commands: List[str]) -> Tuple[bool, List[NftResult]]:
     nft.set_json_output(True)
 
     results = []
+    i=1
     for command in commands:
         results.append(NftResult(*nft.cmd(command)))
+        logging.debug(f"Rule {i}: {command}")
+        i += 1
 
     return all([res.succeeded for res in results]), results
 
@@ -240,6 +244,10 @@ def setup_capture(hotspot_ip: str, captured_networks: List[str]):
         "add rule ip nat CAPTIVE_PASSLIST ip protocol tcp "
         'counter return comment "return non-accepted to calling chain (captive_httpx)"'
     )
+
+    for rule in rules:
+        logging.debug(f"Rule {i}: {rule}")
+        i += 1
 
     return query_netfilter_bulk(rules)
 
