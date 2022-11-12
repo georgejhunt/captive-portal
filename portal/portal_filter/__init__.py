@@ -54,6 +54,7 @@ ALWAYS_ONLINE: bool = bool(os.getenv("ALWAYS_ONLINE", ""))
 def initial_setup(**kwargs):
     """call setup_capture if there is no CAPTIVE_PASSLIST chain (assume not setup)"""
     result = query_netfilter("list chain nat CAPTIVE_PASSLIST")
+    logger.debug(f"result of netfilter query: {result}")
     if not result.succeeded:
         logger.debug("IN initial_setup calling setup_capture")
         return setup_capture(hotspot_ip=PORTAL_IP, captured_networks=CAPTURED_NETWORKS)
@@ -144,8 +145,9 @@ def query_netfilter(command: str) -> NftResult:
     """Result of executing a netfilter command"""
     nft = nftables.Nftables()
     nft.set_json_output(True)
-
-    return NftResult(*nft.cmd(command))
+    result_str = NftResult(*nft.cmd(command))
+    logger.info(f"IN query_netfilte: {result_str}")
+    return result_str
 
 
 def query_netfilter_bulk(commands: List[str]) -> Tuple[bool, List[NftResult]]:
@@ -244,7 +246,7 @@ def setup_capture(hotspot_ip: str, captured_networks: List[str]):
         "add rule ip nat CAPTIVE_PASSLIST ip protocol tcp "
         'counter return comment "return non-accepted to calling chain (captive_httpx)"'
     )
-
+    i = 1
     for rule in rules:
         logging.debug(f"Rule {i}: {rule}")
         i += 1

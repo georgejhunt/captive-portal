@@ -11,9 +11,11 @@ sys.path.append(str(pathlib.Path(__file__).parent.resolve()))
 from constants import Conf
 from web import app
 
-if not os.getenv("DONT_SETUP_FILTER"):
+#if not os.getenv("DONT_SETUP_FILTER"):
+if True:
     Conf.logger.info(f"setting up filter via {Conf.filter_module}")
     initial_setup = Conf.get_filter_func("initial_setup")
+    Conf.logger.info(f"get_filter: {type(initial_setup)}")
     initial_setup()
 
 if __name__ == "__main__":

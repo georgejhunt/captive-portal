@@ -29,9 +29,10 @@ class Config:
     def __post_init__(self):
         if self.debug:
             self.logger.setLevel(logging.DEBUG)
-
+        
+        os.chown("/tmp/autoportal.sock",33,33)
         if self.filter_module:
-            self.logger.info("importing {self.filter_module} into _filter_module")
+            self.logger.info(f"importing {self.filter_module} into _filter_module")
             self._filter_module = importlib.import_module(self.filter_module)
 
     @property
