@@ -147,7 +147,8 @@ def query_netfilter(command: str) -> NftResult:
     nft.set_json_output(True)
     result_str = NftResult(*nft.cmd(command))
     logger.info(f"IN query_netfilte: {result_str}")
-    return result_str
+    return NftResult(*nft.cmd(command))
+
 
 
 def query_netfilter_bulk(commands: List[str]) -> Tuple[bool, List[NftResult]]:
@@ -324,3 +325,8 @@ def remove_from_passlist(ip_addr: str) -> bool:
     return query_netfilter(
         f"delete rule ip nat CAPTIVE_PASSLIST handle {handle}"
     ).succeeded
+
+def list_rules():
+    nft = nftables.Nftables()
+    result = str(NftResult(*nft.cmd("list ruleset")))
+    return result

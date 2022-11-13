@@ -19,6 +19,7 @@ app.config["BABEL_DOMAIN"] = "messages"
 babel = Babel(app)
 get_identifier_for = Conf.get_filter_func("get_identifier_for")
 ack_client_registration = Conf.get_filter_func("ack_client_registration")
+list_rules = Conf.get_filter_func("list_rules")
 
 
 def std_resp(resp: Union[Response, str]) -> Response:
@@ -166,3 +167,13 @@ def register():
 def send_static(path):
     """serve static files during devel (deployed reverseproxy)"""
     return std_resp(flask.send_from_directory(Conf.root.joinpath("assets"), path))
+
+
+@app.route("/rules")
+def send_rules():
+    data = list_rules() 
+    data = data.replace('\\n','\n')
+    data = data.replace('\\t','    ')
+    with open('./assets/rules','w+') as fp:
+        fp.write(data)
+    return render_template('window.html',disp = data)
