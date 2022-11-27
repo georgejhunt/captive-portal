@@ -27,3 +27,8 @@ def get_identifier_for(**kwargs) -> str:
 def is_client_active(**kwargs) -> bool:
     logger.info(f"called get_identifier_for with {kwargs=}")
     return False
+
+def list_rules(**kwargs) -> str:
+    logger.info(f"called list_rules _for with {kwargs=}")
+    return ''
+

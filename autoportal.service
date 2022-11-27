@@ -3,7 +3,7 @@ Description=uWSGI Service
 After=network-online.target
 
 [Service]
-ExecStart=/usr/bin/uwsgi --ini  /opt/iiab/autoportal/autoportal.ini
+ExecStart=/usr/bin/uwsgi --ini  /etc/uwsgi/apps-enabled/autoportal_uwsgi.ini
 Restart=always
 RestartSec=5
 KillSignal=SIGQUIT
