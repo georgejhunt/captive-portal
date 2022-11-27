@@ -169,7 +169,7 @@ def send_static(path):
     return std_resp(flask.send_from_directory(Conf.root.joinpath("assets"), path))
 
 
-@app.route("/assets/rules")
+@app.route("/rules")
 def send_rules():
     data = list_rules() 
     data = data.replace('\\n','\n')
