@@ -42,7 +42,7 @@ logger = logging.getLogger("portal-filter")
 
 PORTAL_IP: str = os.getenv("HOTSPOT_IP", "192.168.2.1")
 HTTP_PORT: int = int(os.getenv("HTTP_PORT", "2080"))
-HTTPS_PORT: int = int(os.getenv("HTTP_PORT", "2443"))
+HTTPS_PORT: int = int(os.getenv("HTTPS_PORT", "2443"))
 CAPTURED_NETWORKS: List[str] = os.getenv("CAPTURED_NETWORKS", "").split("|")
 ALWAYS_ONLINE: bool = bool(os.getenv("ALWAYS_ONLINE", ""))
 
@@ -146,7 +146,8 @@ def query_netfilter(command: str) -> NftResult:
     nft = nftables.Nftables()
     nft.set_json_output(True)
     result_str = NftResult(*nft.cmd(command))
-    logger.info(f"IN query_netfilte: {result_str}")
+    logger.info(f"IN query_netfilter sending command: {command}")
+    logger.info(f"IN query_result: {result_str}")
     return NftResult(*nft.cmd(command))
 
 
@@ -215,7 +216,7 @@ def setup_capture(hotspot_ip: str, captured_networks: List[str]):
             # ip daddr != 192.168.2.1 tcp dport 80 counter jump CAPTIVE_HTTP
             rules.append(
                 f"add rule ip nat PREROUTING ip saddr {network} tcp "
-                "dport 80 counter jump CAPTIVE_HTTP "
+                "dport 80 counter log jump CAPTIVE_HTTP "
                 'comment "Captured HTTP traffic to CAPTIVE_HTTP"'
             )
             rules.append(
