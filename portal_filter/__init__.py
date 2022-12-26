@@ -24,6 +24,7 @@ import platform
 import subprocess
 import time
 from typing import List, Optional, Tuple
+from remote_pdb import RemotePdb
 
 if platform.system() != "Linux":
     raise NotImplementedError(f"{platform.system()} is not supported. Linux only")
@@ -52,15 +53,19 @@ ALWAYS_ONLINE: bool = bool(os.getenv("ALWAYS_ONLINE", ""))
 
 
 def initial_setup(**kwargs):
+    result = query_netfilter("flush ruleset")
     """call setup_capture if there is no CAPTIVE_PASSLIST chain (assume not setup)"""
     result = query_netfilter("list chain nat CAPTIVE_PASSLIST")
-    if not result.succeeded:
+    #if not result.succeeded:
+    if True:
+        logger.info("calling setup_capture initialization of netfilter")
         return setup_capture(hotspot_ip=PORTAL_IP, captured_networks=CAPTURED_NETWORKS)
     return True, []
 
 
 # API
 def ack_client_registration(ip_addr: str) -> bool:
+    RemotePdb('127.0.0.1', 4444).set_trace()
     """whether ip_addr has been added to CAPTIVE_PASSLIST chain (if not present)
 
     rule is INSERTED so it's passed before the end-of-chain's RETURN"""
@@ -182,6 +187,7 @@ def ip_in_passlist(ip_addr: str) -> str:
 def setup_capture(hotspot_ip: str, captured_networks: List[str]):
     """install our table, chains and rules"""
     rules = []
+    #RemotePdb('127.0.0.1', 4444).set_trace()
 
     # should already be present
     rules.append("add table ip nat")
@@ -190,7 +196,7 @@ def setup_capture(hotspot_ip: str, captured_networks: List[str]):
     for chain in ("PREROUTING", "CAPTIVE_HTTP", "CAPTIVE_HTTPS", "CAPTIVE_PASSLIST"):
         rules.append(f"add chain ip nat {chain}")
 
-    if not captured_networks:
+    if  captured_networks != "":
         rules.append(
             f"add rule ip nat PREROUTING ip daddr != {hotspot_ip} tcp "
             "dport 80 counter jump CAPTIVE_HTTP "

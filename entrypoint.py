@@ -8,6 +8,10 @@ import sys
 
 sys.path.append(str(pathlib.Path(__file__).parent.resolve()))
 
+from remote_pdb import RemotePdb
+#RemotePdb('127.0.0.1', 4444).set_trace()
+# Connect to RemotePdb with "telnet 127.0.0.1 4444"
+
 from portal.constants import Conf
 from portal.web import app
 
@@ -17,6 +21,6 @@ if not os.getenv("DONT_SETUP_FILTER"):
     initial_setup()
 
 if __name__ == "__main__":
-    app.run(host=os.getenv("BIND_TO", "127.0.0.1"), port=int(os.getenv("PORT", 3000)))
+    app.run(host=os.getenv("BIND_TO", "0.0.0.0"), port=int(os.getenv("PORT", 2080)))
 else:
     application = app
