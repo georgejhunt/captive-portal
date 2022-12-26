@@ -1,0 +1,6 @@
+#!/bin/bash -x
+# Dump the user database for autoportal captive portal
+
+cd /opt/iiab/autoportal
+sqlite3 portal-users.db "select * from  user;"
+
