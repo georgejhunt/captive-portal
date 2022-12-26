@@ -53,7 +53,7 @@ ALWAYS_ONLINE: bool = bool(os.getenv("ALWAYS_ONLINE", ""))
 
 
 def initial_setup(**kwargs):
-    result = query_netfilter("flush ruleset")
+    #result = query_netfilter("flush ruleset")
     """call setup_capture if there is no CAPTIVE_PASSLIST chain (assume not setup)"""
     result = query_netfilter("list chain nat CAPTIVE_PASSLIST")
     #if not result.succeeded:
@@ -65,7 +65,7 @@ def initial_setup(**kwargs):
 
 # API
 def ack_client_registration(ip_addr: str) -> bool:
-    RemotePdb('127.0.0.1', 4444).set_trace()
+    #RemotePdb('127.0.0.1', 4444).set_trace()
     """whether ip_addr has been added to CAPTIVE_PASSLIST chain (if not present)
 
     rule is INSERTED so it's passed before the end-of-chain's RETURN"""
