@@ -246,7 +246,12 @@ def setup_capture(hotspot_ip: str, captured_networks: List[str]):
         "add rule ip nat CAPTIVE_PASSLIST ip protocol tcp "
         'counter return comment "return non-accepted to calling chain (captive_httpx)"'
     )
-
+    # Enable INPUT and OUTPUT for our nat chains
+    for kind in ("input","output"):
+        rules.append(
+                f"add rule ip nat {kind} policy accept"
+        )
+    
     return query_netfilter_bulk(rules)
 
 
