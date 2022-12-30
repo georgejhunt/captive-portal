@@ -192,10 +192,15 @@ def setup_capture(hotspot_ip: str, captured_networks: List[str]):
     # should already be present
     rules.append("add table ip nat")
 
+    # specifying type, hook, priority creates a base chain which the network stack feeds
+    # if not online, the masquerade setup is missing, and portal chains recieve no packets
+    rules.append("add chain ip nat PREROUTING { type nat hook prerouting priority -100 ; }")
+
     # create chains (CAPTIVE_HTTP, CAPTIVE_HTTPS, CAPTIVE_PASSLIST)
-    for chain in ("PREROUTING", "CAPTIVE_HTTP", "CAPTIVE_HTTPS", "CAPTIVE_PASSLIST"):
+    for chain in ("CAPTIVE_HTTP", "CAPTIVE_HTTPS", "CAPTIVE_PASSLIST"):
         rules.append(f"add chain ip nat {chain}")
 
+    
     if  captured_networks != "":
         rules.append(
             f"add rule ip nat PREROUTING ip daddr != {hotspot_ip} tcp "
@@ -246,17 +251,11 @@ def setup_capture(hotspot_ip: str, captured_networks: List[str]):
         "add rule ip nat CAPTIVE_PASSLIST ip protocol tcp "
         'counter return comment "return non-accepted to calling chain (captive_httpx)"'
     )
-    # Enable INPUT and OUTPUT for our nat chains
-    for kind in ("input","output"):
-        rules.append(
-                f"add rule ip nat {kind} policy accept"
-        )
-    
     return query_netfilter_bulk(rules)
 
 
 def has_active_connection(ip_addr: str) -> bool:
-    r"""whether there is at least one established connection for this IP
+    """whether there is at least one established connection for this IP
 
     /!\ depends on `conntrack` binary being installed and will silently
     report non-active if missing.
