@@ -56,8 +56,7 @@ def initial_setup(**kwargs):
     #result = query_netfilter("flush ruleset")
     """call setup_capture if there is no CAPTIVE_PASSLIST chain (assume not setup)"""
     result = query_netfilter("list chain nat CAPTIVE_PASSLIST")
-    #if not result.succeeded:
-    if True:
+    if not result.succeeded:
         logger.info("calling setup_capture initialization of netfilter")
         return setup_capture(hotspot_ip=PORTAL_IP, captured_networks=CAPTURED_NETWORKS)
     return True, []
